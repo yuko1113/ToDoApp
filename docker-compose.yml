@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+  mysql-todots3:
+    image: mysql:5.7
+    env_file: ./mysql/mysql.env
+    environment:
+      - TZ=Asia/Tokyo
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./mysql/conf:/etc/mysql/conf.d/conf
+    networks:
+      - backend
+
+  exp-todots3:
+    image: node:lts
+    env_file: ./app.env
+    environment:
+      - TZ=Asia/Tokyo
+      - DEBUG=app:*
+      - NODE_ENV=DEVELOPMENT
+      - PORT=3001 # コンテナ内でのポート番号
+    tty: true
+    ports:
+      - '3001:3001'
+      - '9229:9229'
+    volumes:
+      - ./backend/src:/app
+    working_dir: /app
+    command: npm run dev
+    networks:
+      - backend
+    depends_on:
+      - mysql-todots3
+
+  ts-todots3:
+    build: ./frontend
+    volumes:
+      - ./frontend:/usr/src/app
+    command: sh -c "cd next && npm run dev"
+    ports:
+      - '3000:3000'
+    networks:
+      - frontend
+
+networks:
+  backend:
+  frontend:

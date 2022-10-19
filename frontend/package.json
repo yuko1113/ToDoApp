@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "axios": "^0.27.2",
+    "create-next-app": "^12.2.5",
+    "react-icons": "^4.4.0"
+  }
+}
